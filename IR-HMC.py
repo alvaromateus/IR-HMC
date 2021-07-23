@@ -23,20 +23,20 @@ class Parametros(object):
     #df = pd.read_csv("datasets_GO/cellcycle_GsO/cellcycle_GO.train.test.csv")
     #df_hierarquia = pd.read_csv("datasets_GO/cellcycle_GO/hierarquia2.csv")
 
-    nome_base = "Cellcycle"
-    df = pd.read_csv("datasets_GO/cellcycle_GO/GOCellcycle(atributosFaltando).csv")
-    df_hierarquia = pd.read_csv("datasets_GO/cellcycle_GO/hierarquia_cellcycle.csv")
-    arquivo_divisao = "Helyane/GOCellcycleInstanciasTreinamento.txt"
+    #nome_base = "Cellcycle"
+    #df = pd.read_csv("datasets_GO/cellcycle_GO/GOCellcycle(atributosFaltando).csv")
+    #df_hierarquia = pd.read_csv("datasets_GO/cellcycle_GO/hierarquia_cellcycle.csv")
+    #arquivo_divisao = "Helyane/GOCellcycleInstanciasTreinamento.txt"
 
     #nome_base = "Church"
     #df = pd.read_csv("Helyane/GOChurch(atributosFaltando).csv")
     #df_hierarquia = pd.read_csv("datasets_GO/church_GO/hierarquia_church.csv")
     #arquivo_divisao = "Helyane/GOChurchInstanciasTreinamento.txt"
 
-    #nome_base = "Eisen"
-    #df = pd.read_csv("Helyane/GOEisen(atributosFaltando).txt")
-    #df_hierarquia = pd.read_csv("datasets_GO/eisen_GO/hierarquia.csv")
-    #arquivo_divisao = "Helyane/GOEisenInstanciasTreinamento.txt"
+    nome_base = "Eisen"
+    df = pd.read_csv("Helyane/GOEisen(atributosFaltando).txt")
+    df_hierarquia = pd.read_csv("datasets_GO/eisen_GO/hierarquia.csv")
+    arquivo_divisao = "Helyane/GOEisenInstanciasTreinamento.txt"
 
     #nome_base = "Expr"
     #df = pd.read_csv("Helyane/GOExpr(atributosFaltando).txt")
@@ -206,15 +206,15 @@ def melhor_correlacao(indice_atributo, conjunto, metodo, grau, exemplo_imputado)
             lista.append(correlacao)
             return lista
         except:
-            correlacao = Correlacao('n/a',0)
-            return correlacao    
+            correlacao = Correlacao('indeterminado',0)
+            lista.append(correlacao)
+            return lista
     if metodo == 2: # regressão múltipla
         if len(conjunto) > 5:
             try:
                 indice = quantidade_colunas-2                        
                 while indice > 0:
-                    if np.sort(selecao[0])[indice] > 0.5: # Se houver correlação boa
-                        #print (np.sort(selecao[0])[indice])                                        
+                    if np.sort(selecao[0])[indice] > 0.5: # Se houver correlação boa                        
                         selecao = correlation.fillna(0)[correlation.iloc[indice_atributo]==1].values
                         indice_correlacao = np.sort(selecao[0])[indice]
                         nome_coluna = correlation.columns.values[correlation.iloc[indice_atributo]==indice_correlacao]        
@@ -227,15 +227,15 @@ def melhor_correlacao(indice_atributo, conjunto, metodo, grau, exemplo_imputado)
                 if len(lista)>0:
                     return lista
                 else:
-                    correlacao = Correlacao('n/a',0)
+                    correlacao = Correlacao('indeterminado',0)
                     lista.append(correlacao)
                     return lista
             except: 
-                correlacao = Correlacao('n/a',0)
+                correlacao = Correlacao('indeterminado',0)
                 lista.append(correlacao)
                 return lista
         else:
-            correlacao = Correlacao('n/a',0)
+            correlacao = Correlacao('indeterminado',0)
             lista.append(correlacao)
             return lista
 
