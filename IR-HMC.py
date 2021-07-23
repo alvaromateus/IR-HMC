@@ -1,3 +1,4 @@
+import time
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,54 +11,70 @@ from scipy import stats
 import math
 from datetime import datetime
 from sklearn import metrics
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
-# Parametrizações iniciais
-metodo = 1 # 0-Regressão Linar   |   1-Regressão Polinomial
-grau_polinomio = 3
+class Parametros(object):
+    # Parametrizações iniciais
+    metodo = 0 # 0-Regressão Linar   |   1-Regressão Polinomial  |  2-Regressão linear múltipla
+    grau_polinomio = 3 # usado somente para regressão polinomial
 
-#nome_base = "Teste"
-#df = pd.read_csv("datasets_GO/cellcycle_GO/cellcycle_GO.train.test.csv")
-#df_hierarquia = pd.read_csv("datasets_GO/cellcycle_GO/hierarquia2.csv")
+    #nome_base = "Teste"
+    #df = pd.read_csv("datasets_GO/cellcycle_GsO/cellcycle_GO.train.test.csv")
+    #df_hierarquia = pd.read_csv("datasets_GO/cellcycle_GO/hierarquia2.csv")
 
-nome_base = "Cellcycle"
-df = pd.read_csv("datasets_GO/cellcycle_GO/GOCellcycle(atributosFaltando).csv")
-df_hierarquia = pd.read_csv("datasets_GO/cellcycle_GO/hierarquia_cellcycle.csv")
-arquivo_divisao = "Helyane/GOCellcycleInstanciasTreinamento.txt"
+    nome_base = "Cellcycle"
+    df = pd.read_csv("datasets_GO/cellcycle_GO/GOCellcycle(atributosFaltando).csv")
+    df_hierarquia = pd.read_csv("datasets_GO/cellcycle_GO/hierarquia_cellcycle.csv")
+    arquivo_divisao = "Helyane/GOCellcycleInstanciasTreinamento.txt"
 
-#nome_base = "Church"
-#df = pd.read_csv("Helyane/GOChurch(atributosFaltando).txt")
-#df_hierarquia = pd.read_csv("datasets_GO/church_GO/hierarquia_church.csv")
-#arquivo_divisao = "Helyane/GOChurchInstanciasTreinamento.txt"
+    #nome_base = "Church"
+    #df = pd.read_csv("Helyane/GOChurch(atributosFaltando).csv")
+    #df_hierarquia = pd.read_csv("datasets_GO/church_GO/hierarquia_church.csv")
+    #arquivo_divisao = "Helyane/GOChurchInstanciasTreinamento.txt"
 
-#nome_base = "Eisen"
-#df = pd.read_csv("Helyane/GOEisen(atributosFaltando).txt")
-#df_hierarquia = pd.read_csv("datasets_GO/eisen_GO/hierarquia.csv")
-#arquivo_divisao = "Helyane/GOEisenInstanciasTreinamento.txt"
+    #nome_base = "Eisen"
+    #df = pd.read_csv("Helyane/GOEisen(atributosFaltando).txt")
+    #df_hierarquia = pd.read_csv("datasets_GO/eisen_GO/hierarquia.csv")
+    #arquivo_divisao = "Helyane/GOEisenInstanciasTreinamento.txt"
 
-#nome_base = "Expr"
-#df = pd.read_csv("Helyane/GOExpr(atributosFaltando).txt")
-#df_hierarquia = pd.read_csv("datasets_GO/expr_GO/hierarquia.csv")
-#arquivo_divisao = "Helyane/GOExprInstanciasTreinamento.txt"
+    #nome_base = "Expr"
+    #df = pd.read_csv("Helyane/GOExpr(atributosFaltando).txt")
+    #df_hierarquia = pd.read_csv("datasets_GO/expr_GO/hierarquia.csv")
+    #arquivo_divisao = "Helyane/GOExprInstanciasTreinamento.txt"
 
-#nome_base = "Gasch1"
-#df = pd.read_csv("Helyane/GOGasch1(atributosFaltando).txt")
-#df_hierarquia = pd.read_csv("datasets_GO/gasch1_GO/hierarquia.csv")
-#arquivo_divisao = "Helyane/GOGasch1InstanciasTreinamento.txt"
+    #nome_base = "Gasch1"
+    #df = pd.read_csv("Helyane/GOGasch1(atributosFaltando).txt")
+    #df_hierarquia = pd.read_csv("datasets_GO/gasch1_GO/hierarquia.csv")
+    #arquivo_divisao = "Helyane/GOGasch1InstanciasTreinamento.txt"
 
-#nome_base = "Gasch2"
-#df = pd.read_csv("Helyane/GOGasch2(atributosFaltando).txt")
-#df_hierarquia = pd.read_csv("datasets_GO/gasch2_GO/hierarquia.csv")
-#arquivo_divisao = "Helyane/GOGasch2InstanciasTreinamento.txt"
+    #nome_base = "Gasch2"
+    #df = pd.read_csv("Helyane/GOGasch2(atributosFaltando).txt")
+    #df_hierarquia = pd.read_csv("datasets_GO/gasch2_GO/hierarquia.csv")
+    #arquivo_divisao = "Helyane/GOGasch2InstanciasTreinamento.txt"
 
-#nome_base = "Seq"
-#df = pd.read_csv("Helyane/GOSeq(atributosFaltando).txt")
-#df_hierarquia = pd.read_csv("datasets_GO/seq_GO/hierarquia.csv")
-#arquivo_divisao = "Helyane/GOSeqInstanciasTreinamento.txt"
+    #nome_base = "Seq"
+    #df = pd.read_csv("Helyane/GOSeq(atributosFaltando).txt")
+    #df_hierarquia = pd.read_csv("datasets_GO/seq_GO/hierarquia.csv")
+    #arquivo_divisao = "Helyane/GOSeqInstanciasTreinamento.txt"
 
-#nome_base = "Spo"
-#df = pd.read_csv("Helyane/GOSpo(atributosFaltando).txt")
-#df_hierarquia = pd.read_csv("datasets_GO/spo_GO/hierarquia.csv")
-#arquivo_divisao = "Helyane/GOSpoInstanciasTreinamento.txt"
+    #nome_base = "Spo"
+    #df = pd.read_csv("Helyane/GOSpo(atributosFaltando).txt")
+    #df_hierarquia = pd.read_csv("datasets_GO/spo_GO/hierarquia.csv")
+    #arquivo_divisao = "Helyane/GOSpoInstanciasTreinamento.txt"
+class Correlacao(object): 
+    def __init__(self, nome, indice): 
+        self.__nome = nome 
+        self.__indice = indice 
+
+    def __repr__(self): 
+        return "nome:%s indice:%s" % (self.__nome, self.__indice)
+
+    def get_nome(self):   
+        return self.__nome
+
+    def get_indice(self): 
+        return self.__indice
 
 def retorna_ascendentes(conjunto, classe):  # retorna classe pai
     pais = []  # variável que será retornada do tipo array pois será possível haver mais de um ascendente
@@ -78,23 +95,31 @@ def verifica_rotulos_ascendentes(base, rotulo, base_hierarquia):  # Verificaçã
 
 def polyfit(x, y, degree):
     results = {}
+    try:
+        coeffs = np.polyfit(x, y, degree)
+    except ValueError:
+        results['determination'] = 0.0
+        #print("\nErro!\n")
+        return results
+    else:    
+        # Polynomial Coefficients
+        results['polynomial'] = coeffs.tolist()
 
-    coeffs = np.polyfit(x, y, degree)
+        # r-squared
+        p = np.poly1d(coeffs)
+        # fit values, and mean
+        yhat = p(x)                      # or [p(z) for z in x]
+        ybar = np.sum(y)/len(y)          # or sum(y)/len(y)
+        ssreg = np.sum((yhat-ybar)**2)   # or sum([ (yihat - ybar)**2 for yihat in yhat])
+        sstot = np.sum((y - ybar)**2)    # or sum([ (yi - ybar)**2 for yi in y])
+        try:
+            results['determination'] = ssreg / sstot
+        except ValueError:
+            results['determination'] = 0.0
+            #print("\nErro!\n")
+            return results
 
-     # Polynomial Coefficients
-    results['polynomial'] = coeffs.tolist()
-
-    # r-squared
-    p = np.poly1d(coeffs)
-    # fit values, and mean
-    yhat = p(x)                         # or [p(z) for z in x]
-    ybar = np.sum(y)/len(y)          # or sum(y)/len(y)
-    ssreg = np.sum((yhat-ybar)**2)   # or sum([ (yihat - ybar)**2 for yihat in yhat])
-    sstot = np.sum((y - ybar)**2)    # or sum([ (yi - ybar)**2 for yi in y])
-    results['determination'] = ssreg / sstot
-
-    return results
-
+        return results
 
 def correlacao(conjunto, indice_atributo_a, indice_atributo_b, metodo, grau):
     x = conjunto.fillna(0).iloc[:, indice_atributo_a].values
@@ -109,8 +134,8 @@ def correlacao(conjunto, indice_atributo_a, indice_atributo_b, metodo, grau):
             return 0
         else:
             return indice
-    if (metodo == 1): # usa método específico
-        indice = polyfit(x,y,grau)['determination'].round(5)
+    if (metodo == 1): # usa método específico        
+        indice = round(polyfit(x,y,grau)['determination'],4)
         
         if indice == 1:
             return 0
@@ -166,30 +191,53 @@ def verificacao_hierarquica_multirrotulo(base, rotulos_dado_faltante, base_hiera
                     conjunto = pd.merge_ordered(conjunto, conjunto_, fill_method="ffill")
             else:
                 conjunto = pd.merge_ordered(conjunto, dados_rotulos[0], fill_method="ffill")
-    return conjunto.fillna(conjunto.mean(0)) # caso o conjunto resultante possua dados faltantes faz imputação pela média
+    return conjunto.fillna(conjunto.mean(0)) # caso o conjunto resultante possua dados faltantes faz imputação pela média        
 
-def melhor_correlacao(indice_atributo, conjunto, metodo, grau, exemplo_imputado):
-    contador = 0
-    correlacoes = []
-    colunas = []
-    while (contador < conjunto.iloc[0, :].size - 1):
-        correlacoes.append(correlacao(conjunto, indice_atributo, contador, metodo, grau))
-        colunas.append(conjunto.columns[contador])
-        contador = contador + 1
-        
-    correlacoes = pd.DataFrame(np.array(correlacoes).reshape(conjunto.iloc[0, :].size-1, 1), columns=list('c'))
-    colunas = pd.DataFrame(np.array(colunas).reshape(conjunto.iloc[0, :].size-1, 1), columns=list("a"))
-
-    correlacoes = correlacoes.join(colunas, lsuffix='coeficiente', rsuffix='atributo')
-    correlacoes.columns = ['coeficiente', 'atributo']
-    correlacoes = correlacoes.sort_values(by='coeficiente', ascending=False).reset_index(drop=True)
-
-    # caso a coluna com melhor correlação tenha dado faltante no exemplo em verificado, a coluna é removida e é realizada nova verificação
-    if (isNaN(exemplo_imputado[correlacoes.loc[0:0]['atributo'].values[0]])): 
-        conjunto = conjunto.drop(columns=[correlacoes.loc[0:0]['atributo'].values[0]])
-        return melhor_correlacao(indice_atributo,conjunto,metodo,grau,exemplo_imputado)
-    else:
-        return correlacoes.loc[0:0]['atributo'].values[0],correlacoes.loc[0:0]['coeficiente'].values[0]
+def melhor_correlacao(indice_atributo, conjunto, metodo, grau, exemplo_imputado):       
+    correlation = conjunto.corr()
+    quantidade_colunas = correlation.shape[0]    
+    selecao = correlation.fillna(0)[correlation.iloc[indice_atributo]==1].values
+    lista = []
+    if metodo == 0 or metodo == 1: # regressão linear ou polinomial        
+        try:
+            indice_correlacao = np.sort(selecao[0])[quantidade_colunas-2]
+            nome_coluna = correlation.columns.values[correlation.iloc[indice_atributo]==indice_correlacao]
+            correlacao = Correlacao(nome_coluna,indice_correlacao)
+            lista.append(correlacao)
+            return lista
+        except:
+            correlacao = Correlacao('n/a',0)
+            return correlacao    
+    if metodo == 2: # regressão múltipla
+        if len(conjunto) > 5:
+            try:
+                indice = quantidade_colunas-2                        
+                while indice > 0:
+                    if np.sort(selecao[0])[indice] > 0.5: # Se houver correlação boa
+                        #print (np.sort(selecao[0])[indice])                                        
+                        selecao = correlation.fillna(0)[correlation.iloc[indice_atributo]==1].values
+                        indice_correlacao = np.sort(selecao[0])[indice]
+                        nome_coluna = correlation.columns.values[correlation.iloc[indice_atributo]==indice_correlacao]        
+                        
+                        correlacao = Correlacao(nome_coluna,indice_correlacao)
+                        lista.append(correlacao)                    
+                    else:                         
+                        break
+                    indice -= 1
+                if len(lista)>0:
+                    return lista
+                else:
+                    correlacao = Correlacao('n/a',0)
+                    lista.append(correlacao)
+                    return lista
+            except: 
+                correlacao = Correlacao('n/a',0)
+                lista.append(correlacao)
+                return lista
+        else:
+            correlacao = Correlacao('n/a',0)
+            lista.append(correlacao)
+            return lista
 
 def regressao_polinomial(coluna_melhor_correlacao, indice_atributo, conjunto, variavel_independente, grau):
     coluna_melhor_correlacao = conjunto.columns.get_loc(coluna_melhor_correlacao)
@@ -200,16 +248,18 @@ def regressao_polinomial(coluna_melhor_correlacao, indice_atributo, conjunto, va
     poly_reg = PolynomialFeatures(degree=grau)
 
     x = x.reshape(-1, 1)
+    try:
+        x_poly = poly_reg.fit_transform(x)
+        poly_reg.fit(x_poly,y)    
 
-    x_poly = poly_reg.fit_transform(x)
-    poly_reg.fit(x_poly,y)
-    #modelo.fit(x_polinomio, y)    
-
-    lin_reg_2 = LinearRegression()
-    lin_reg_2.fit(x_poly,y)
-    resultado = lin_reg_2.predict(poly_reg.fit_transform([[variavel_independente]]))[0]
-
-    return resultado
+        lin_reg_2 = LinearRegression()
+        
+        lin_reg_2.fit(x_poly,y)
+        resultado = lin_reg_2.predict(poly_reg.fit_transform([[variavel_independente]]))[0]        
+        return resultado
+    except ValueError:
+        resultado = conjunto.iloc[:, coluna_melhor_correlacao].mean()
+        return resultado
 
 def regressao_linear(coluna_melhor_correlacao, indice_atributo, conjunto, variavel_independente):
     coluna_melhor_correlacao = conjunto.columns.get_loc(coluna_melhor_correlacao)
@@ -223,19 +273,41 @@ def regressao_linear(coluna_melhor_correlacao, indice_atributo, conjunto, variav
 
     return modelo.predict([[variavel_independente]])[0]
 
+def regressao_multipla(lista_correlacao, indice_atributo, conjunto, variaveis_independentes):
+    x = pd.DataFrame()
+    variaveis_independentes = []
+    for i in lista_correlacao:        
+        x[i.get_nome()[0]] = conjunto[i.get_nome()[0]].fillna(conjunto.mean())        
+        variaveis_independentes.append(conjunto.columns.get_loc(i.get_nome()[0]))
+    x = x.values
+    
+    #coluna_melhor_correlacao = conjunto.columns.get_loc(lista_correlacao)
+    y = conjunto.fillna(0).iloc[:, indice_atributo].values
+    
+    modelo = LinearRegression()
+    modelo.fit(x, y)
+    
+    variaveis_independentes = np.array([*variaveis_independentes])
+    #variaveis_independentes = variaveis_independentes.reshape(1, -1)
+        
+    return modelo.predict([[*variaveis_independentes]])[0]
+
 def normalize(df_input):
-    base_drop = pd.DataFrame(df_input.drop(columns=['class'])) # Retira coluna da classe para fazer normalização
+    header = df_input.columns
     coluna_classe = pd.DataFrame(df_input['class'])
+    base_drop = pd.DataFrame(df_input.drop(columns=['class'])) # Retira coluna da classe para fazer normalização    
+    
+    min_max_scaler = preprocessing.MinMaxScaler()   
+    x_scaled = min_max_scaler.fit_transform(base_drop.round(4)) # Normaliza com Min/Max    
+    #x_scaled = (base_drop - base_drop.min()) / (base_drop.max() - base_drop.min())    
+    #x_scaled = base_drop/base_drop.max()
+    #x_scaled = base_drop / base_drop.max(axis=0)
 
-    x = base_drop.values #returns a numpy array
-    min_max_scaler = preprocessing.MinMaxScaler()
-    x_scaled = min_max_scaler.fit_transform(x) # Normaliza com Min/Max
-    df_input = pd.DataFrame(x_scaled).round(3)
+    df_input = pd.DataFrame(x_scaled)
     df_input = df_input.join(coluna_classe, lsuffix='_caller', rsuffix='_other') # Adiciona coluna classe novamente
+    df_input.columns = header
 
-    #df.to_csv(r'//home/alvaro/Estudo/Clus-HMC/data/church_faltantes/GOChurch(atributosFaltando).arff', index=False, header=True)
     return df_input
-    #df.to_csv(r'normalizado.csv', index=False, header=True)
 
 def any_nan(conjunto):
     nan = 0
@@ -244,9 +316,7 @@ def any_nan(conjunto):
         if isNaN(x):
             nan = nan+1
         else:
-            not_nan = not_nan+1
-    #print(nan)
-    #print(not_nan)
+            not_nan = not_nan+1    
     
     if not_nan>0:
         return False
@@ -255,62 +325,107 @@ def any_nan(conjunto):
 
 def undo_split(arquivo_instancias_treinamento, base_imputada):
     instancias_treinamento = pd.read_csv(arquivo_instancias_treinamento, header=None)
-    #base_imputada = pd.read_csv("normalizado.csv")
 
     treinamento = base_imputada.loc[base_imputada.index[instancias_treinamento[0]-1]]
     teste = base_imputada.loc[base_imputada.index.difference(instancias_treinamento[0]-1)]
     return teste,treinamento
-    
-#################################### MAIN ##############################################
 
+# Instancia e zera contadores
 coluna = 0
 quantidade_regressao = 0
 quantidade_media = 0
+quantidade_moda = 0
 
-while (coluna < df.iloc[0, :].size-1):
+parametros = Parametros() # classe com parâmetros e bases de dados iniciais
+
+while (coluna < parametros.df.iloc[0, :].size-1):
     linha = 0
-    while(linha < df['class'].size):
-        if isNaN(df.loc[linha][coluna]): # verifica se a linha e coluna possui dado faltante
-            rotulos_dado_faltante = df.loc[linha][df.columns.get_loc('class')].split('@')  # seleciona linha x coluna
-            exemplo_imputado = df.loc[linha]  # armazena o exemplo a ser imputado 
-            df_ = df.drop(linha)  # cria copia removendo exemplo com dado faltante do conjunto
-
-            conjunto = verificacao_hierarquica_multirrotulo(df_, rotulos_dado_faltante, df_hierarquia)  # define conjunto semelhante
-            print("Linha: "+str(linha)+" | Coluna: "+str(coluna) + " | "+df.columns.values[coluna] +" | Time:" +datetime.now().strftime("%d/%m/%Y %H:%M:%S"))            
-            # define atributos categórios das bases de dados
-            atributos_categoricos = (['spo_failed_pcr','spo_blast_homology_within_genome','spo_overlaps_another_orf','failed_pcr','blast_homology_within_genome','church_chip_affymetrix_chip'])            
+    while(linha < parametros.df['class'].size):    
+        if isNaN(parametros.df.loc[linha][coluna]): # verifica se a linha e coluna possui dado faltante        
+            rotulos_dado_faltante = parametros.df.loc[linha][parametros.df.columns.get_loc('class')].split('@')  # seleciona linha x coluna
+            exemplo_imputado = parametros.df.loc[linha]  # armazena o exemplo a ser imputado 
+            df_ = parametros.df.drop(linha)  # cria copia removendo exemplo com dado faltante do conjunto
             
-            if not (df.columns.values[coluna] in atributos_categoricos):
-                # define atributo com melhor correlação
-                atributo_melhor_correlacao = melhor_correlacao(coluna, conjunto, metodo, grau_polinomio, exemplo_imputado)  
-                if (atributo_melhor_correlacao[1] >= 0.3): # Se correlação for boa (maior ou igual que 0.3) usa regressão
-                    print("REGRESSÃO --------")
-                    print(atributo_melhor_correlacao[1])
-                    variavel_independente = df[atributo_melhor_correlacao[0]].loc[linha]                    
-                    if (metodo == 0): # regressão linear
-                        regressao = regressao_linear(atributo_melhor_correlacao[0], coluna, conjunto.drop(columns=['class']), variavel_independente)
-                        df.iloc[linha, coluna] = round(regressao,2)
-                    elif (metodo == 1): # regressão polinomial
-                        regressao = regressao_polinomial(atributo_melhor_correlacao[0], coluna, conjunto.drop(columns=['class']), variavel_independente, grau_polinomio)
-                        df.iloc[linha, coluna] = round(regressao,2)        
-                    quantidade_regressao = quantidade_regressao+1                                  
-                else: # se correlação não for boa usa média (<0.3)
-                    print("MEDIA --------")
-                    print(atributo_melhor_correlacao[1])
-                    media = conjunto.iloc[:, coluna].mean()
-                    if not (isNaN(media)):
-                        df.iloc[linha, coluna] = media # caso não exista como verificar a média
+            #define subconjunto
+            conjunto = verificacao_hierarquica_multirrotulo(df_, rotulos_dado_faltante, parametros.df_hierarquia)  # define conjunto semelhante            
+            print("Linha: "+str(linha)+" | Coluna: "+str(coluna) + " | "+parametros.df.columns.values[coluna] +" | Time: " +datetime.now().strftime("%d/%m/%Y - %H:%M:%S"))            
+
+            # define atributos categórios das bases de dados 
+            atributos_categoricos = (['spo_failed_pcr','spo_blast_homology_within_genome','spo_overlaps_another_orf','failed_pcr','blast_homology_within_genome','church_chip_affymetrix_chip'])            
+            if not (parametros.df.columns.values[coluna] in atributos_categoricos):                                
+                # define atributo com melhor correlação                
+                atributo_melhor_correlacao = melhor_correlacao(coluna, conjunto, parametros.metodo, parametros.grau_polinomio, exemplo_imputado)
+                
+                # Se correlação for boa (maior ou igual que 0.5) usa regressão
+                if (atributo_melhor_correlacao[0].get_indice() >= 0.5): 
+                    print("Usando REGRESSÃO. Melhor coeficiente de correlação: "+ str(atributo_melhor_correlacao[0].get_indice()) + " com atributo "+atributo_melhor_correlacao[0].get_nome()[0])
+
+                    # define a variável independente (dado da instância com atributo faltante na coluna que possui melhor correlação)
+                    variavel_independente = parametros.df.fillna(parametros.df.mean())[atributo_melhor_correlacao[0].get_nome()[0]].loc[linha]                    
+
+                    # regressão linear (se método igual a 0 ou houver somente um atributo com correlação superior a 0.5)
+                    if (parametros.metodo == 0 or len(atributo_melhor_correlacao) == 1): 
+                        regressao = regressao_linear(atributo_melhor_correlacao[0].get_nome()[0], coluna, conjunto.drop(columns=['class']), variavel_independente)
+
+                        # faz a imputação do valor utilizando o modelo de regressão linear
+                        parametros.df.iloc[linha, coluna] = round(regressao,4)
+
+                    # regressão polinomial
+                    if (parametros.metodo == 1): 
+                        regressao = regressao_polinomial(atributo_melhor_correlacao[0].get_nome()[0], coluna, conjunto.drop(columns=['class']), variavel_independente, parametros.grau_polinomio)
+
+                        # faz a imputação do valor utilizando o modelo de regressão polinomial
+                        parametros.df.iloc[linha, coluna] = round(regressao,4)
+                    
+                    # regressão múltipla (se método igual a dois e houver mais de um atributo com correlação superior a 0.5)
+                    if (parametros.metodo == 2 and len(atributo_melhor_correlacao) > 1): 
+                        variaveis_independentes = []
+
+                        # define as variáveis independentes (dados da instância com atributo faltante nas colunas em que há boa correlação)
+                        for i in atributo_melhor_correlacao:                            
+                            variaveis_independentes.append(parametros.df.fillna(parametros.df.mean()[parametros.df.columns.get_loc(i.get_nome()[0])]).loc[linha])                            
+                        variaveis_independentes = atributo_melhor_correlacao
+
+                        regressao = regressao_multipla(atributo_melhor_correlacao, coluna, conjunto.drop(columns=['class']), variaveis_independentes)
+
+                        # faz a imputação do valor pelo utilizando o modelo de regressão múltipla
+                        parametros.df.iloc[linha, coluna] = round(regressao,4)
+                    quantidade_regressao = quantidade_regressao+1
+
+                # se correlação não for boa (<0.5) usa média 
+                else: 
+                    print("Usando MÉDIA. Melhor coeficiente de correlação: "+str(atributo_melhor_correlacao[0].get_indice())  + " com atributo "+atributo_melhor_correlacao[0].get_nome()[0]) 
+                    media = conjunto.iloc[:, coluna].mean(skipna=True)                    
+                    if not (isNaN(media)): # Caso seja possível definir a média
+                        # faz a imputação do valor utilizando a média do conjunto
+                        parametros.df.iloc[linha, coluna] = media 
                     else:
-                        df.iloc[linha, coluna] = 0
+                        # se não for possível determinar a média insere o valor 0
+                        parametros.df.iloc[linha, coluna] = 0
                     quantidade_media = quantidade_media+1
+            # Se for atributo categórica faz imputação pela moda
             else:
-                print("Atributo categórico!")
-                #variavel_independente = df[atributo_melhor_correlacao[0]].mode()[0]
+                print("Usando MODA. Atributo categórico encontrado.")
+                moda = conjunto.iloc[:, coluna].mode()
+                if not (moda.empty): # caso seja possível definir a moda
+                    # faz a imputação do valor utilizando a moda
+                    parametros.df.iloc[linha, coluna] = moda[0]
+                else:                    
+                    parametros.df.iloc[linha, coluna] = 1
+                quantidade_moda = quantidade_moda+1            
         linha = linha + 1        
     coluna = coluna + 1
-    print("Coluna concluída")        
-print(df)
-normalizado = normalize(df) # normaliza dados
-teste, treinamento = undo_split(arquivo_divisao, normalizado) # divide em trteinamento e teste
-treinamento.to_csv(r'treinamento-'+nome_base+"-M"+str(quantidade_media)+"-R"+str(quantidade_regressao)+("-linear"if metodo==0 else "-polinomial_"+str(grau_polinomio))+'.csv', index=False, header=True) # salva nos arquivos correspondenttes
-teste.to_csv(r'teste-'+nome_base+"-M"+str(quantidade_media)+"-R"+str(quantidade_regressao)+("-linear"if metodo==0 else "-polinomial_"+str(grau_polinomio))+'.csv', index=False, header=True)
+    print("Coluna concluída")
+
+# imprime base de dados imputada
+print(parametros.df)
+
+# normaliza os dados
+df = normalize(parametros.df) # normaliza dados
+
+# divide em base e treinamento (conforme arquivo que define a divisão)
+teste, treinamento = undo_split(parametros.arquivo_divisao, df) # divide em treinamento e teste
+
+# salva os resultados em dois arquivos .csv (treinamento e teste) inserindo informações do método utilizado ao final do nome do arquivo
+treinamento.to_csv(r'treinamento-'+parametros.nome_base+"-M"+str(quantidade_media)+"-R"+str(quantidade_regressao)+"-MODA"+str(quantidade_moda)+("-linear"if parametros.metodo==0 else "-polinomial_"+str(parametros.grau_polinomio))+'.csv', index=False, header=True) # salva nos arquivos correspondenttes
+teste.to_csv(r'teste-'+parametros.nome_base+"-M"+str(quantidade_media)+"-R"+str(quantidade_regressao)+"-MODA"+str(quantidade_moda)+("-linear"if parametros.metodo==0 else "-polinomial_"+str(parametros.grau_polinomio))+'.csv', index=False, header=True)
