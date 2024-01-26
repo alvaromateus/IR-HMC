@@ -1,6 +1,6 @@
 ## Sobre o projeto (IR-HMC)
 
-Dissertaçao: https://repositorio.utfpr.edu.br/jspui/handle/1/28969
+Dissertaçao: https://repositorio.utfpr.edu.br/jspui/handle/1/28969<br>
 Publicaçao em workshop: http://www.wpccg.pro.br/volume004.html
 
 <p>Imputation based on Regression for Hierarchical Multilabel Classification (IR-HMC) é um projeto desenvolvido como parte da dissertação apresentada no Programa de Pós-Graduação em Ciência da Computação da Universidade Tecnológica Federal do Paraná - Campus Ponta Grossa.</p>
